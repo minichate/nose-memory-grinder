@@ -9,24 +9,25 @@ MEMORY_USAGE_MESSAGE = '''Memory usage too high:
     Start:      %s
     End:        %s
 ---------------------------
-    Increase:   %s%%'''
+    Increase:   +%s'''
 
 
 class MemoryTestResult(TextTestResult):
 
     def startTest(self, test):
         super(MemoryTestResult, self).startTest(test)
-        gc.collect()
+        gc.collect(2)
         self.mem_before = self.using()
 
     def stopTest(self, test):
+        gc.collect(2)
         self.mem_after = self.using()
         if not self.wasSuccessful():
-            pct = 100 * float(self.mem_after) / float(self.mem_before)
+            difference = self.mem_after - self.mem_before
             msg = MEMORY_USAGE_MESSAGE % (
                 self.humanize_bytes(self.mem_before),
                 self.humanize_bytes(self.mem_after),
-                '{0:.3g}'.format(pct - 100)
+                self.humanize_bytes(difference)
             )
             self.addFailure(
                 test,
@@ -38,7 +39,7 @@ class MemoryTestResult(TextTestResult):
         super(MemoryTestResult, self).stopTest(test)
 
     def wasSuccessful(self):
-        if self.mem_after > self.mem_before * 1.05:
+        if (self.mem_after - self.mem_before) > (5 << 20L):
             return False
         return True
 
@@ -57,13 +58,9 @@ class MemoryTestResult(TextTestResult):
         self.stream.flush()
 
     def _get_format_string(self):
-        pct = 100 * float(self.mem_after) / float(self.mem_before)
-        before = self.mem_before
-        after = self.mem_after
-        return '%s/%s (%s%%)' % (
-            self.humanize_bytes(before),
-            self.humanize_bytes(after),
-            '{0:.3g}'.format(pct - 100)
+        difference = self.mem_after - self.mem_before
+        return '(+%s)' % (
+            self.humanize_bytes(difference)
         )
 
     def humanize_bytes(self, bytes, precision=1):
