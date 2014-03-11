@@ -5,7 +5,13 @@ Captures the memory usage for each of your test cases, looking for memory
 leaks.
 
 `nose-memory-grinder` is a nose_ plugin which displays the memory usage of
-each test case instead of just "ok", "FAIL" or "ERROR". It captures the memory usage before and after each test case, and will fail the test case if usage increases by 10% or more.
+each test case instead of just "ok", "FAIL" or "ERROR". It captures the memory 
+usage before and after each test case, and will fail the test case if usage 
+increases by 10% or more.
+
+It'll make your tests run significantly slower than usual, since it runs a 
+``gc.collect()`` before and after each test. This forces the Python runtime
+to do a full garbage collection twice for every test.
 
 .. _nose: https://nose.readthedocs.org/en/latest/
 
