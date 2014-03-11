@@ -16,6 +16,7 @@ class MemoryTestResult(TextTestResult):
 
     def startTest(self, test):
         super(MemoryTestResult, self).startTest(test)
+        gc.collect()
         self.mem_before = self.using()
 
     def stopTest(self, test):
