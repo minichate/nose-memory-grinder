@@ -7,11 +7,7 @@ leaks.
 `nose-memory-grinder` is a nose_ plugin which displays the memory usage of
 each test case instead of just "ok", "FAIL" or "ERROR". It captures the memory 
 usage before and after each test case, and will fail the test case if usage 
-increases by 10% or more.
-
-It'll make your tests run significantly slower than usual, since it runs a 
-``gc.collect()`` before and after each test. This forces the Python runtime
-to do a full garbage collection twice for every test.
+increases by 5% or more.
 
 .. _nose: https://nose.readthedocs.org/en/latest/
 
@@ -28,6 +24,17 @@ Use
 The easy way::
 
   nosetests --with-nose-memory-grind
+
+TODO
+====
+
+- The threshold for test failure should be configurable. You should be able to
+  fail the test by specifying a percentage increase (ie: 10%) or ``x`` bytes
+  as well
+
+- Output should be configurable
+
+- Telling nose to stop on the first failure (ie: ``-x``) doesn't work right now.
 
 Author
 ======
