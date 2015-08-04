@@ -13,7 +13,8 @@ MEMORY_USAGE_MESSAGE = '''Memory usage too high:
 
 
 class MemoryTestResult(TextTestResult):
-
+    mem_before = 0
+    mem_after = 0
     def startTest(self, test):
         super(MemoryTestResult, self).startTest(test)
         gc.collect(2)
